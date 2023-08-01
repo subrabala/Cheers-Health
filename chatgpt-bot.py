@@ -1,7 +1,7 @@
 import openai
 import gradio as gr
 import time
-from config import settings
+from app.config import settings
 
 openai.api_key = settings.openai_api_key
 
