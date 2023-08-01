@@ -1,19 +1,16 @@
 import pandas as pd
-from typing import List
 
-from fastapi import FastAPI, Depends, Response, status, HTTPException
-from fastapi.params import Body
+from fastapi import FastAPI, Depends, status, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
+# from sqlalchemy.orm import Session
 
-from sqlalchemy.orm import Session
-
-import models
+# import models
+# from database import engine, get_db
 import schemas
-from database import engine, get_db
-from app.config import settings
 
-app = FastAPI()
+
+app = FastAPI(prefix='/chatbot')
 
 origins = ['*']
 
@@ -25,9 +22,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
-@app.post("/get_response", status_code=status.HTTP_200_OK, response_model=List[schemas.AddressDetails])
-def getAddresses(payLoad: schemas.GetAddress, db: Session = Depends(get_db)):
 
 dataset = pd.read_excel("dataset.xlsx")
 alphabet = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz"
@@ -49,26 +43,29 @@ def convert_to_dict(response, cell_no):
                     ] = response.pop(key, None)
     return response
 
-def gen_response(cell):
+@app.get("/get_questions", )
+def get_questions():
+    cell="A2"
     cell_no = convert_to_no(cell)
-    if (cell == "A1"):
-        cell="A2"
-        cell_no = convert_to_no(cell)
-        response = dataset.iloc[cell_no[0]:len(dataset.index), cell_no[1]+1].dropna()
-        response = response.to_dict()
-        response_tmp = response.copy()
-        for key in response_tmp.keys():
-            response[convert_to_xl([key, cell_no[1]])
-                     ] = response.pop(key, None)
+    response = dataset.iloc[cell_no[0]:len(dataset.index), cell_no[1]+1].dropna()
+    response = response.to_dict()
+    response_tmp = response.copy()
+    for key in response_tmp.keys():
+        response[convert_to_xl([key, cell_no[1]])
+                    ] = response.pop(key, None)
+    return response
+
+@app.post("/gen_response", status_code=status.HTTP_200_OK, response_model=schemas.QuestionResponse)
+def gen_response(payLoad: schemas.CellPosition):
+    cell_no = convert_to_no(payLoad.cell)
+    if (cell_no[1]%2 == 0):
+        response = {"question": dataset.iloc[cell_no[0], cell_no[1]+1]}
+        next_index = dataset.index.where(dataset[list(dataset.columns)[cell_no[1]+1]].notna().dropna())
+        next_index = list(i for i in (list(next_index)) if i>cell_no[0])[0]
+        options = dataset.iloc[cell_no[0]:int(next_index), cell_no[1]+2].dropna()
+        options = convert_to_dict(options, [cell_no[0], cell_no[1]+1])
+        response["options"]=options
         return response
 
-    if (cell_no[1]%2 == 0):
-        # response = dataset.iloc[cell_no[0], cell_no[1]+1]
-        # response = {convert_to_xl([cell_no[0], cell_no[1]+1]): response}
-        response = {"Question": dataset.iloc[cell_no[0], cell_no[1]+1]}
-        next = dataset.index.where(dataset[list(dataset.columns)[cell_no[1]+1]].notna().dropna())
-        next = list(i for i in (list(next)) if i>cell_no[0])[0]
-        options = dataset.iloc[cell_no[0]:int(next), cell_no[1]+2].dropna()
-        options = convert_to_dict(options, [cell_no[0], cell_no[1]+1])
-        response["Options"]=options
-        return response
+    else:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid Cell Position")

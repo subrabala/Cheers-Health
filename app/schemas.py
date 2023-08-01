@@ -1,17 +1,13 @@
 from pydantic import BaseModel
-from datetime import datetime
 
 
-class NewPost(BaseModel):
-    title: str
-    content: str
-    published: bool = True
+class CellPosition(BaseModel):
+    cell: str
 
 
-class ResponseAccount(BaseModel):
-    email: str
-    hashed_password: str
-    created_at: datetime
+class QuestionResponse(BaseModel):
+    question: str
+    options: dict
 
     class Config:
         orm_mode = True
