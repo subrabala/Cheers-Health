@@ -23,7 +23,7 @@ app.add_middleware(
 )
 
 
-dataset = pd.read_excel("dataset.xlsx")
+dataset = pd.read_excel(r"D:\OneDrive\Repositories\Cheers-Health\dataset.xlsx")
 alphabet = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz"
 
 def convert_to_no(cell):
@@ -55,16 +55,20 @@ def get_questions():
                     ] = response.pop(key, None)
     return response
 
-@app.post("/gen_response", status_code=status.HTTP_200_OK, response_model=schemas.QuestionResponse)
+@app.post("/gen_response", status_code=status.HTTP_200_OK)
 def gen_response(payLoad: schemas.CellPosition):
     cell_no = convert_to_no(payLoad.cell)
     if (cell_no[1]%2 == 0):
-        response = {"question": dataset.iloc[cell_no[0], cell_no[1]+1]}
+        response = {"question": str(dataset.iloc[cell_no[0], cell_no[1]+1])}
         next_index = dataset.index.where(dataset[list(dataset.columns)[cell_no[1]+1]].notna().dropna())
+        print(list(next_index))
         next_index = list(i for i in (list(next_index)) if i>cell_no[0])[0]
         options = dataset.iloc[cell_no[0]:int(next_index), cell_no[1]+2].dropna()
         options = convert_to_dict(options, [cell_no[0], cell_no[1]+1])
         response["options"]=options
+        if (response["question"]=="nan"):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid Cell Position")
         return response
 
     else:
