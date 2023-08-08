@@ -3,10 +3,10 @@ import pandas as pd
 from fastapi import FastAPI, Depends, status, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
-from sqlalchemy.orm import Session
+# from sqlalchemy.orm import Session
 
-import models
-from database import engine, get_db
+# import models
+# from database import engine, get_db
 import schemas
 
 
@@ -22,9 +22,33 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+dataset = pd.read_excel(r"D:\OneDrive\Repositories\Cheers-Health\dataset.xlsx")
+alphabet = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz"
+
+def convert_to_no(cell):
+    cell = cell.lower()
+    cell_no = [int(cell[1:])-2, alphabet.index(cell[0])]
+    return cell_no
+
+def convert_to_xl(cell_no):
+    cell = alphabet[cell_no[1]].upper()+str(cell_no[0]+2)
+    return cell
+
+def convert_to_dict(response, cell_no):
+    response = response.to_dict()
+    response_tmp = response.copy()
+    for key in response_tmp.keys():
+        response[convert_to_xl([key, cell_no[1]+1])
+                    ] = response.pop(key, None)
+    return response
+
 @app.get("/get_questions", )
 def get_questions():
-    id="c8951605-3904-494f-a2a9-ce651dfb211b"
+    cell="A2"
+    cell_no = convert_to_no(cell)
+    response = dataset.iloc[cell_no[0]:len(dataset.index), cell_no[1]+1].dropna()
+    response = response.to_dict()
     response_tmp = response.copy()
     for key in response_tmp.keys():
         response[convert_to_xl([key, cell_no[1]])
