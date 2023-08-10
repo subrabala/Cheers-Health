@@ -1,0 +1,36 @@
+from sqlalchemy import Column, Integer, String, Text, VARCHAR, ARRAY, Uuid
+from sqlalchemy.sql.expression import text
+from sqlalchemy.sql.sqltypes import TIMESTAMP
+from database import Base
+import uuid
+
+
+class Questions(Base):
+    __tablename__ = "core_questiondataset"
+
+    created_at = Column(TIMESTAMP(timezone=True),
+                        nullable=False, server_default=text('now()'))
+    updated_at = Column(TIMESTAMP(timezone=True),
+                        nullable=False, server_default=text('now()'))
+    id = Column(Uuid(as_uuid=True), primary_key=True,
+                nullable=False, default=uuid.uuid4())
+    expression = Column(Text, nullable=False)
+    keyword_intents = Column(VARCHAR[255], nullable=True)
+
+
+class Answers(Base):
+    __tablename__ = "core_answerdataset"
+
+    created_at = Column(TIMESTAMP(timezone=True),
+                        nullable=False, server_default=text('now()'))
+    updated_at = Column(TIMESTAMP(timezone=True),
+                        nullable=False, server_default=text('now()'))
+    id = Column(Uuid(as_uuid=True), primary_key=True,
+                nullable=False, default=uuid.uuid4())
+    expression = Column(Text, nullable=False)
+    score = Column(Integer, nullable=False)
+    keyword_intents = Column(ARRAY(String), nullable=True)
+    suggested_action = Column(VARCHAR[255], nullable=True)
+    elder_question_id = Column(Uuid, nullable=True)
+    progeny_question_id = Column(Uuid, nullable=True)
+    question_id = Column(Uuid, nullable=False)
