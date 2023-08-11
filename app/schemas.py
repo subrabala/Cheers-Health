@@ -1,20 +1,18 @@
 from pydantic import BaseModel, UUID4
 from uuid import uuid4
+from sqlalchemy import Column, String
 import uuid
-from typing import List, Optional, Union
-
-
-def gen_session_id():
-    return uuid.uuid4()
+from typing import List, Optional
 
 
 class GetQuestion(BaseModel):
-    id: UUID4
-    session_id: Optional[UUID4] = None
+    question_id: UUID4
 
 
-class GetAnswer(GetQuestion):
-    pass
+class GetAnswer(BaseModel):
+    answer_id: UUID4
+    journal_id: UUID4
+    user_id: UUID4
 
 
 class QuestionResponse(BaseModel):
@@ -28,14 +26,34 @@ class AnswerOptions(BaseModel):
     expression: str
     score: int
     keyword_intents: List
-    suggested_actions: Optional[str] = None
+    suggested_action: Optional[str] = None
     elder_question_id: UUID4
     progeny_question_id: Optional[UUID4] = None
     question_id: UUID4
 
 
+class InitialAnswerOptions(BaseModel):
+    id: UUID4
+    expression: str
+    score: int
+    keyword_intents: List
+    suggested_action: Optional[str] = None
+    progeny_question_id: Optional[UUID4] = None
+    question_id: UUID4
+
+
+class InitialQuestion(BaseModel):
+    journal_id: UUID4
+    question: QuestionResponse
+    answer_options: List[InitialAnswerOptions]
+
+    class config:
+        orm_mode = True
+
+
 class QuestionAnswers(BaseModel):
-    session_id: UUID4
+    journal_id: UUID4
+    user_id: UUID4
     question: QuestionResponse
     answer_options: List[AnswerOptions]
 

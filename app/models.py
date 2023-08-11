@@ -34,3 +34,18 @@ class Answers(Base):
     elder_question_id = Column(Uuid, nullable=True)
     progeny_question_id = Column(Uuid, nullable=True)
     question_id = Column(Uuid, nullable=False)
+
+
+class Journal(Base):
+    __tablename__ = "journal"
+    answered_at = Column(TIMESTAMP(timezone=True), primary_key=True,
+                         nullable=False, server_Default=text('now()'))
+    journal_id = Column(Uuid(as_uuid=True), nullable=False)
+    user_id = Column(Uuid(as_uuid=True), nullable=False)
+    score = Column(Integer, nullable=False)
+    question_id = Column(Uuid, nullable=False)
+    progeny_question_id = Column(Uuid, nullable=True)
+    answer_id = Column(Uuid(as_uuid=True), nullable=False)
+    question_expression = Column(Text, nullable=False)
+    answer_expression = Column(Text, nullable=False)
+    suggested_action = Column(VARCHAR(255), nullable=True)
