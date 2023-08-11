@@ -81,6 +81,7 @@ def gen_response(payLoad: schemas.GetAnswer, db: Session = Depends(get_db)):
             question_id=recieved_answer.question_id, progeny_question_id=recieved_answer.progeny_question_id, answer_id=payLoad.answer_id,
             question_expression=elder_question_expression, answer_expression=recieved_answer.expression, suggested_action=recieved_answer.suggested_action
         )
+        
 
     db.add(journal)
     db.commit()

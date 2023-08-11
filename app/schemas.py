@@ -18,28 +18,28 @@ class GetAnswer(BaseModel):
 class QuestionResponse(BaseModel):
     id: UUID4
     expression: str
-    keyword_intents: list
+    # keyword_intents: list
 
 
 class AnswerOptions(BaseModel):
     id: UUID4
     expression: str
     score: int
-    keyword_intents: List
+    # keyword_intents: List
     suggested_action: Optional[str] = None
-    elder_question_id: UUID4
+    # elder_question_id: UUID4
     progeny_question_id: Optional[UUID4] = None
-    question_id: UUID4
+    # question_id: UUID4
 
 
 class InitialAnswerOptions(BaseModel):
     id: UUID4
     expression: str
     score: int
-    keyword_intents: List
+    # keyword_intents: List
     suggested_action: Optional[str] = None
     progeny_question_id: Optional[UUID4] = None
-    question_id: UUID4
+    # question_id: UUID4
 
 
 class InitialQuestion(BaseModel):
