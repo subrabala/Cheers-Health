@@ -24,21 +24,21 @@ class QuestionResponse(BaseModel):
 class AnswerOptions(BaseModel):
     id: UUID4
     expression: str
-    score: int
+    # score: int
     # keyword_intents: List
     suggested_action: Optional[str] = None
     # elder_question_id: UUID4
-    progeny_question_id: Optional[UUID4] = None
+    # progeny_question_id: Optional[UUID4] = None
     # question_id: UUID4
 
 
 class InitialAnswerOptions(BaseModel):
     id: UUID4
     expression: str
-    score: int
+    # score: int
     # keyword_intents: List
     suggested_action: Optional[str] = None
-    progeny_question_id: Optional[UUID4] = None
+    # progeny_question_id: Optional[UUID4] = None
     # question_id: UUID4
 
 
@@ -52,8 +52,8 @@ class InitialQuestion(BaseModel):
 
 
 class QuestionAnswers(BaseModel):
-    journal_id: UUID4
-    user_id: UUID4
+    # journal_id: UUID4
+    # user_id: UUID4
     question: Optional[QuestionResponse]
     answer_options: Optional[List[AnswerOptions]]
 
