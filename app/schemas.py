@@ -5,10 +5,6 @@ import uuid
 from typing import List, Optional
 
 
-class GetQuestion(BaseModel):
-    question_id: UUID4
-
-
 class GetAnswer(BaseModel):
     answer_id: UUID4
     journal_id: UUID4
