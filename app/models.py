@@ -39,7 +39,7 @@ class Answers(Base):
 class Journal(Base):
     __tablename__ = "journal"
     answered_at = Column(TIMESTAMP(timezone=True), primary_key=True,
-                         nullable=False, server_Default=text('now()'))
+                         nullable=False, server_default=text('now()'))
     journal_id = Column(Uuid(as_uuid=True), nullable=False)
     user_id = Column(Uuid(as_uuid=True), nullable=False)
     score = Column(Integer, nullable=False)
