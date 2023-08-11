@@ -54,8 +54,8 @@ class InitialQuestion(BaseModel):
 class QuestionAnswers(BaseModel):
     journal_id: UUID4
     user_id: UUID4
-    question: QuestionResponse
-    answer_options: List[AnswerOptions]
+    question: Optional[QuestionResponse]
+    answer_options: Optional[List[AnswerOptions]]
 
     class Config:
         orm_mode = True
