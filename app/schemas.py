@@ -15,8 +15,10 @@ class GetAnswer(BaseModel):
     user_id: UUID4
 
 # Request Schema for getting Query for generating GPT Response
+
+
 class GPTQuery(BaseModel):
-    chat_id: UUID4
+    chat_session_id: Optional[UUID4]
     user_id: UUID4
     query: str
 
@@ -31,6 +33,8 @@ class QuestionResponse(BaseModel):
     # keyword_intents: list
 
 # Prerequisite Response Schema for Sending Answer Expression
+
+
 class AnswerOptions(BaseModel):
     answer_id: UUID4
     expression: str
@@ -42,6 +46,8 @@ class AnswerOptions(BaseModel):
     # question_id: UUID4
 
 # Response Schema for Sending Question and Possible Answers based on Answer IDF
+
+
 class QuestionAnswers(BaseModel):
     # journal_id: UUID4
     # user_id: UUID4
@@ -52,6 +58,8 @@ class QuestionAnswers(BaseModel):
         orm_mode = True
 
 # Prerequisite Response Schema for Sending First Answer Expression (Doesn't have Elder Question ID)
+
+
 class InitialAnswerOptions(BaseModel):
     answer_id: UUID4
     expression: str
@@ -62,10 +70,22 @@ class InitialAnswerOptions(BaseModel):
     # question_id: UUID4
 
 # Response Schema for Journal ID and Initial Question
+
+
 class InitialQuestion(BaseModel):
     journal_id: UUID4
     question: QuestionResponse
     answer_options: List[InitialAnswerOptions]
+
+    class config:
+        orm_mode = True
+
+# Response Schema for GPT Response
+
+
+class GPTResponse(BaseModel):
+    chat_session_id: Optional[UUID4]
+    response: str
 
     class config:
         orm_mode = True

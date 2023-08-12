@@ -1,3 +1,4 @@
+from aiohttp import Payload
 from fastapi import FastAPI, Depends, status, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import UUID4
@@ -17,7 +18,7 @@ app = FastAPI(prefix='/chatbot')
 origins = ['*']
 
 # starting_id = "c8951605-3904-494f-a2a9-ce651dfb211b"
-pre_prompt = {"role": "system", "content": "The following is conversation between a user and an AI Health chatbot. The chatbot is helpful, creative, clever, and very friendly."}
+pre_prompt = "You are an AI Health Chatbot. The chatbot is helpful, creative, clever, and very friendly."
 
 app.add_middleware(
     CORSMiddleware,
@@ -92,13 +93,32 @@ def gen_response(payLoad: schemas.GetAnswer, db: Session = Depends(get_db)):
     return response
 
 
-@app.post("/gpt_response", response_model=schemas.AnswerOptions)
-def gpt_response(payLoad: schemas., db: Session = Depends(get_db())):
-    global history
-    history += f"{message}\nChatbot: "
+@app.post("/gpt_response", response_model=schemas.GPTResponse)
+def gpt_response(payLoad: schemas.GPTQuery, db: Session = Depends(get_db)):
+    if payLoad.chat_session_id is None:
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            prompt=[{"role": "system", "content": pre_prompt}, {"role": "user", "content": payLoad.query}],
+            stop="bye",
+        )
+        return {"chat_session_id": gen_uuid(), "response": response.choices[0].message.content.strip()}
+
+
+    history = db.query(models.GPTLogs).filter(models.GPTLogs.chat_session_id==payLoad.chat_session_id).all()
+
+    chat_history = []
+
+    for chat in history:
+        chat_history.append({"role": "user", "content": chat.query})
+        chat_history.append({"role": "assistant", "content": chat.response})
+
+    chat_history.append({"role": "user", "content": payLoad.query})
+
+    print(chat_history)
+
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
-        prompt=history,
+        prompt= chat_history,
         # temperature=0.9,
         # max_tokens=150,
         # frequency_penalty=0,
@@ -106,11 +126,15 @@ def gpt_response(payLoad: schemas., db: Session = Depends(get_db())):
         stop="bye",
     )
 
-    bot_message = response.choices[0].text.strip()
+    print(response.choices[0].message.role)
 
-    history += f"{bot_message}\nUser: "
+    chat_history = []
 
-    chat_history.append([message, bot_message])
-    time.sleep(0.5)
-    print(history)
-    return "", chat_history
+    new_chat = models.GPTLogs(user_id=payLoad.user_id, chat_session_id=payLoad.chat_session_id,
+                              query=payLoad.query, response=response.choices[0].message.content.strip())
+
+
+    db.add(new_chat)
+    db.commit()
+
+    return {"response": response.choices[0].message.content.strip()}

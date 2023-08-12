@@ -56,7 +56,7 @@ class GPTLogs(Base):
     asked_at = Column(TIMESTAMP(timezone=True), primary_key=True,
                       nullable=False, server_default=text('now()'))
     user_id = Column(Uuid(as_uuid=True), nullable=False)
-    chat_id = Column(Uuid(as_uuid=True), nullable=False)
+    chat_session_id = Column(Uuid(as_uuid=True), nullable=False)
     message_id = Column(Uuid(as_uuid=True), primary_key=True,
                         nullable=False, default=uuid.uuid4())
     query = Column(Text, nullable=False)
