@@ -18,7 +18,7 @@ class GetAnswer(BaseModel):
 
 
 class GPTQuery(BaseModel):
-    chat_session_id: Optional[UUID4]
+    chat_session_id: Optional[UUID4] = None
     user_id: UUID4
     query: str
 
@@ -84,7 +84,7 @@ class InitialQuestion(BaseModel):
 
 
 class GPTResponse(BaseModel):
-    chat_session_id: Optional[UUID4]
+    chat_session_id: Optional[UUID4] = None
     response: str
 
     class config:
