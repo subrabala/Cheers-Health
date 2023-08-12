@@ -1,4 +1,3 @@
-from aiohttp import Payload
 from fastapi import FastAPI, Depends, status, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import UUID4
