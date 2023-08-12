@@ -9,6 +9,7 @@ from typing import List
 import models
 from database import get_db
 import schemas
+import openai
 
 import uuid
 
@@ -16,6 +17,7 @@ app = FastAPI(prefix='/chatbot')
 origins = ['*']
 
 # starting_id = "c8951605-3904-494f-a2a9-ce651dfb211b"
+pre_prompt = {"role": "system", "content": "The following is conversation between a user and an AI Health chatbot. The chatbot is helpful, creative, clever, and very friendly."}
 
 app.add_middleware(
     CORSMiddleware,
@@ -88,3 +90,27 @@ def gen_response(payLoad: schemas.GetAnswer, db: Session = Depends(get_db)):
     db.refresh(journal)
 
     return response
+
+
+@app.post("/gpt_response", response_model=schemas.AnswerOptions)
+def gpt_response(payLoad: schemas., db: Session = Depends(get_db())):
+    global history
+    history += f"{message}\nChatbot: "
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        prompt=history,
+        # temperature=0.9,
+        # max_tokens=150,
+        # frequency_penalty=0,
+        # presence_penalty=0.6,
+        stop="bye",
+    )
+
+    bot_message = response.choices[0].text.strip()
+
+    history += f"{bot_message}\nUser: "
+
+    chat_history.append([message, bot_message])
+    time.sleep(0.5)
+    print(history)
+    return "", chat_history

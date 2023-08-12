@@ -49,3 +49,15 @@ class Journal(Base):
     question_expression = Column(Text, nullable=False)
     answer_expression = Column(Text, nullable=False)
     suggested_action = Column(VARCHAR(255), nullable=True)
+
+
+class GPTLogs(Base):
+    __tablename__ = "gpt_logs"
+    asked_at = Column(TIMESTAMP(timezone=True), primary_key=True,
+                      nullable=False, server_default=text('now()'))
+    user_id = Column(Uuid(as_uuid=True), nullable=False)
+    chat_id = Column(Uuid(as_uuid=True), nullable=False)
+    message_id = Column(Uuid(as_uuid=True), primary_key=True,
+                        nullable=False, default=uuid.uuid4())
+    query = Column(Text, nullable=False)
+    response = Column(Text, nullable=False)
