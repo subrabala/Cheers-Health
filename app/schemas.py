@@ -28,7 +28,7 @@ class GPTQuery(BaseModel):
 
 # Prerequisite Response Schema for Sending Question Expression
 class QuestionResponse(BaseModel):
-    question_id: UUID4
+    id: UUID4
     expression: str
     # keyword_intents: list
 
@@ -36,7 +36,7 @@ class QuestionResponse(BaseModel):
 
 
 class AnswerOptions(BaseModel):
-    answer_id: UUID4
+    id: UUID4
     expression: str
     # score: int
     # keyword_intents: List
@@ -61,7 +61,7 @@ class QuestionAnswers(BaseModel):
 
 
 class InitialAnswerOptions(BaseModel):
-    answer_id: UUID4
+    id: UUID4
     expression: str
     # score: int
     # keyword_intents: List
