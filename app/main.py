@@ -16,6 +16,8 @@ import uuid
 app = FastAPI(prefix='/chatbot')
 origins = ['*']
 
+models.Base.metadata.create_all(bind=engine)
+
 # starting_id = "c8951605-3904-494f-a2a9-ce651dfb211b"
 pre_prompt = "You are an AI Health Chatbot. The chatbot is helpful, creative, clever, and very friendly."
 
