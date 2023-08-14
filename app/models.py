@@ -61,3 +61,11 @@ class GPTLogs(Base):
                         nullable=False, default=uuid.uuid4())
     query = Column(Text, nullable=False)
     response = Column(Text, nullable=False)
+
+
+class PrimaryQuestions(Base):
+    __tablename__ = "primary_questions"
+    added_at = Column(TIMESTAMP(timezone=True),
+                      nullable=False, server_default=text('now()'))
+    question_id = Column(Uuid(as_uuid=True), primary_key=True,
+                         nullable=False, default=uuid.uuid4())

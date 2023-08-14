@@ -8,7 +8,14 @@ from typing import List, Optional
 # REQUEST SCHEMAS
 
 
+# Request Schema for Getting Primary Question IDs
+
+class SetPrimaryQuestions(BaseModel):
+    question_ids: List[UUID4]
+
 # Request Schema for Getting Answer ID
+
+
 class GetAnswer(BaseModel):
     answer_id: UUID4
     journal_id: UUID4
@@ -24,6 +31,9 @@ class GPTQuery(BaseModel):
 
 
 # RESPONSE SCHEMAS
+
+class GetPrimaryQuestions(BaseModel):
+    question_ids: List[UUID4]
 
 
 # Prerequisite Response Schema for Sending Question Expression

@@ -1,3 +1,4 @@
+import http
 from fastapi import FastAPI, Depends, status, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import UUID4
@@ -7,7 +8,8 @@ from sqlalchemy.orm import Session
 from typing import List
 
 import models
-from database import get_db
+from database import get_db, engine
+from utils import gen_uuid
 import schemas
 import openai
 
@@ -30,9 +32,28 @@ app.add_middleware(
 )
 
 
-def gen_uuid():
-    return uuid.uuid4()
+@app.get("/primary_questions", response_model=schemas.GetPrimaryQuestions)
+def get_questions(db: Session = Depends(get_db)):
+    primary_questions = db.query(models.PrimaryQuestions.question_id).all()
+    question_id_list = []
+    for question in primary_questions:
+        question_id_list.append(question.question_id)
 
+    return {"question_ids":question_id_list}
+
+@app.post("/primary_questions", status_code=status.HTTP_202_ACCEPTED)
+def set_questions(payLoad: schemas.SetPrimaryQuestions, db: Session = Depends(get_db)):
+    existing_questions = db.query(models.PrimaryQuestions).delete()
+    db.commit()
+
+    new_primary_questions = []
+    for question in payLoad.question_ids:
+        new_primary_questions.append(
+            models.PrimaryQuestions(question_id=question))
+    db.add_all(new_primary_questions)
+    db.commit()
+
+    return {"Details": "Questions Updated"}
 
 @app.get("/get_question/{question_id}", response_model=schemas.InitialQuestion)
 def get_questions(question_id: UUID4, db: Session = Depends(get_db)):
