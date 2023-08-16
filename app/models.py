@@ -18,6 +18,17 @@ class Questions(Base):
     keyword_intents = Column(VARCHAR[255], nullable=True)
 
 
+class HindiQuestions(Base):
+    __tablename__ = "hindi_questiondataset"
+
+    created_at = Column(TIMESTAMP(timezone=True), nullable=False)
+    updated_at = Column(TIMESTAMP(timezone=True), nullable=False)
+    id = Column(Uuid(as_uuid=True), primary_key=True,
+                nullable=False, default=uuid.uuid4())
+    expression = Column(Text, nullable=False)
+    keyword_intents = Column(VARCHAR[255], nullable=True)
+
+
 class Answers(Base):
     __tablename__ = "core_answerdataset"
 
@@ -25,6 +36,22 @@ class Answers(Base):
                         nullable=False, server_default=text('now()'))
     updated_at = Column(TIMESTAMP(timezone=True),
                         nullable=False, server_default=text('now()'))
+    id = Column(Uuid(as_uuid=True), primary_key=True,
+                nullable=False, default=uuid.uuid4())
+    expression = Column(Text, nullable=False)
+    score = Column(Integer, nullable=False)
+    keyword_intents = Column(ARRAY(String), nullable=True)
+    suggested_action = Column(VARCHAR[255], nullable=True)
+    elder_question_id = Column(Uuid, nullable=True)
+    progeny_question_id = Column(Uuid, nullable=True)
+    question_id = Column(Uuid, nullable=False)
+
+
+class HindiAnswers(Base):
+    __tablename__ = "hindi_answerdataset"
+
+    created_at = Column(TIMESTAMP(timezone=True), nullable=False)
+    updated_at = Column(TIMESTAMP(timezone=True), nullable=False)
     id = Column(Uuid(as_uuid=True), primary_key=True,
                 nullable=False, default=uuid.uuid4())
     expression = Column(Text, nullable=False)

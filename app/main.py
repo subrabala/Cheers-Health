@@ -1,4 +1,3 @@
-import http
 from fastapi import FastAPI, Depends, status, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import UUID4
@@ -9,11 +8,9 @@ from typing import List
 
 import models
 from database import get_db, engine
-from utils import gen_uuid
+from utils import gen_uuid, translate_text
 import schemas
 import openai
-
-import uuid
 
 app = FastAPI(prefix='/chatbot')
 origins = ['*']
@@ -41,7 +38,7 @@ def get_questions(db: Session = Depends(get_db)):
 
     return {"question_ids":question_id_list}
 
-@app.post("/primary_questions", status_code=status.HTTP_202_ACCEPTED)
+@app.put("/primary_questions", status_code=status.HTTP_202_ACCEPTED)
 def set_questions(payLoad: schemas.SetPrimaryQuestions, db: Session = Depends(get_db)):
     existing_questions = db.query(models.PrimaryQuestions).delete()
     db.commit()
@@ -160,3 +157,30 @@ def gpt_response(payLoad: schemas.GPTQuery, db: Session = Depends(get_db)):
     db.commit()
 
     return {"response": response.choices[0].message.content.strip()}
+
+@app.get("/translate_database")
+def translate_database(db: Session = Depends(get_db)):
+    questions = db.query(models.Questions).all()
+    for question in questions:
+        question.expression = translate_text(question.expression)
+        question = question.__dict__
+        del question["_sa_instance_state"]
+        print(question["expression"])
+        new_question = models.HindiQuestions(**question)
+        db.add(new_question)
+        db.commit()
+
+
+    answers = db.query(models.Answers).all()
+    for answer in answers:
+        answer.expression = translate_text(answer.expression)
+        answer.suggested_action = translate_text(answer.suggested_action)
+        answer = answer.__dict__
+        del answer["_sa_instance_state"]
+        print(answer["expression"])
+        new_answer = models.HindiAnswers(**answer)
+        db.add(new_answer)
+        db.commit()
+
+
+    return {"Details": "Database Translated"}
