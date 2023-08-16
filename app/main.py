@@ -4,13 +4,14 @@ from pydantic import UUID4
 
 from sqlalchemy.orm import Session
 
-from typing import List
-
-import models
 from database import get_db, engine
 from utils import gen_uuid, translate_text
-import schemas
+
 import openai
+
+import models
+import schemas
+
 
 app = FastAPI(prefix='/chatbot')
 origins = ['*']
