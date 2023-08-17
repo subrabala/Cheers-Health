@@ -1,5 +1,4 @@
 from fastapi import Depends, APIRouter
-from pydantic import UUID4
 
 from sqlalchemy.orm import Session
 
