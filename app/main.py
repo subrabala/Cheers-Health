@@ -17,8 +17,6 @@ app = FastAPI(prefix='/chatbot')
 origins = ['*']
 
 models.Base.metadata.create_all(bind=engine)
-
-# starting_id = "c8951605-3904-494f-a2a9-ce651dfb211b"
 pre_prompt = "You are an AI Health Chatbot. The chatbot is helpful, creative, clever, and very friendly."
 
 app.add_middleware(
@@ -213,27 +211,24 @@ def gpt_response(payLoad: schemas.GPTQuery, db: Session = Depends(get_db)):
 
 @app.get("/translate_database")
 def translate_database(db: Session = Depends(get_db)):
-    questions = db.query(models.Questions).all()
-    for question in questions:
-        question.expression = translate_text(question.expression)
-        question = question.__dict__
-        del question["_sa_instance_state"]
-        print(question["expression"])
-        new_question = models.HindiQuestions(**question)
-        db.add(new_question)
-        db.commit()
-
+    # questions = db.query(models.Questions).all()
+    # for question in questions:
+    #     question_dict = question.__dict__
+    #     question_dict["expression"] = translate_text(question_dict["expression"])
+    #     del question_dict["_sa_instance_state"]
+    #     new_question = models.HindiQuestions(**question_dict)
+    #     db.add(new_question)
 
     answers = db.query(models.Answers).all()
     for answer in answers:
-        answer.expression = translate_text(answer.expression)
-        answer.suggested_action = translate_text(answer.suggested_action)
-        answer = answer.__dict__
-        del answer["_sa_instance_state"]
-        print(answer["expression"])
-        new_answer = models.HindiAnswers(**answer)
+        answer_dict = answer.__dict__
+        answer_dict["expression"] = translate_text(answer_dict["expression"])
+        if answer_dict["suggested_action"] is not None:
+            answer_dict["suggested_action"] = translate_text(answer_dict["suggested_action"])
+        del answer_dict["_sa_instance_state"]
+        new_answer = models.HindiAnswers(**answer_dict)
         db.add(new_answer)
-        db.commit()
+    db.commit()
 
 
     return {"Details": "Database Translated"}
