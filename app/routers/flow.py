@@ -54,13 +54,12 @@ def gen_response(language: str, payLoad: schemas.GetAnswer, db: Session = Depend
             models.Answers.id == payLoad.answer_id).first()
         elder_question_expression = db.query(models.Questions).filter(
             models.Questions.id == recieved_answer.question_id).first().expression
-
         if recieved_answer.progeny_question_id is None:
             response = {"journal_id": payLoad.journal_id, "user_id": payLoad.user_id,
                         "question": None, "answer_options": None}
 
             journal = models.Journal(
-                journal_id=payLoad.journal_id, user_id=payLoad.user_id, score=recieved_answer.score,
+                log_id=gen_uuid(), journal_id=payLoad.journal_id, user_id=payLoad.user_id, score=recieved_answer.score,
                 question_id=recieved_answer.question_id, progeny_question_id=None, answer_id=payLoad.answer_id,
                 question_expression=elder_question_expression, answer_expression=recieved_answer.expression, suggested_action=recieved_answer.suggested_action
             )
@@ -79,7 +78,7 @@ def gen_response(language: str, payLoad: schemas.GetAnswer, db: Session = Depend
                         "question": question, "answer_options": answers}
 
             journal = models.Journal(
-                journal_id=payLoad.journal_id, user_id=payLoad.user_id, score=recieved_answer.score,
+                log_id=gen_uuid(), journal_id=payLoad.journal_id, user_id=payLoad.user_id, score=recieved_answer.score,
                 question_id=recieved_answer.question_id, progeny_question_id=recieved_answer.progeny_question_id, answer_id=payLoad.answer_id,
                 question_expression=elder_question_expression, answer_expression=recieved_answer.expression, suggested_action=recieved_answer.suggested_action
             )
@@ -91,11 +90,11 @@ def gen_response(language: str, payLoad: schemas.GetAnswer, db: Session = Depend
             models.HindiQuestions.id == recieved_answer.question_id).first().expression
 
         if recieved_answer.progeny_question_id is None:
-            response = {"journal_id": payLoad.journal_id, "user_id": payLoad.user_id,
+            response = {"log_id": gen_uuid(), "journal_id": payLoad.journal_id, "user_id": payLoad.user_id,
                         "question": None, "answer_options": None}
 
             journal = models.Journal(
-                journal_id=payLoad.journal_id, user_id=payLoad.user_id, score=recieved_answer.score,
+                log_id=gen_uuid(), journal_id=payLoad.journal_id, user_id=payLoad.user_id, score=recieved_answer.score,
                 question_id=recieved_answer.question_id, progeny_question_id=None, answer_id=payLoad.answer_id,
                 question_expression=elder_question_expression, answer_expression=recieved_answer.expression, suggested_action=recieved_answer.suggested_action
             )
@@ -114,7 +113,7 @@ def gen_response(language: str, payLoad: schemas.GetAnswer, db: Session = Depend
                         "question": question, "answer_options": answers}
 
             journal = models.Journal(
-                journal_id=payLoad.journal_id, user_id=payLoad.user_id, score=recieved_answer.score,
+                log_id=gen_uuid(), journal_id=payLoad.journal_id, user_id=payLoad.user_id, score=recieved_answer.score,
                 question_id=recieved_answer.question_id, progeny_question_id=recieved_answer.progeny_question_id, answer_id=payLoad.answer_id,
                 question_expression=elder_question_expression, answer_expression=recieved_answer.expression, suggested_action=recieved_answer.suggested_action
             )

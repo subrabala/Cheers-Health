@@ -3,6 +3,7 @@ from uuid import uuid4
 from sqlalchemy import Column, String
 import uuid
 from typing import List, Optional
+from datetime import datetime
 
 
 # REQUEST SCHEMAS
@@ -96,6 +97,31 @@ class InitialQuestion(BaseModel):
 class GPTResponse(BaseModel):
     chat_session_id: Optional[UUID4] = None
     response: str
+
+    class config:
+        orm_mode = True
+
+# Response Schema for getting Journal IDs
+
+
+class UserJournals(BaseModel):
+    answered_at: datetime
+    journal_id: UUID4
+
+
+
+class JournalDetails(BaseModel):
+    answered_at: datetime
+    log_id: UUID4
+    # journal_id: UUID4
+    # user_id: UUID4
+    score: int
+    question_id: UUID4
+    progeny_question_id: Optional[UUID4] = None
+    answer_id: UUID4
+    question_expression: str
+    answer_expression: str
+    suggested_action: Optional[str] = None
 
     class config:
         orm_mode = True
