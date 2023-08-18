@@ -1,14 +1,10 @@
-from datetime import datetime, timedelta
-
 from fastapi import Depends, Query, status, HTTPException, APIRouter
 from pydantic import UUID4
-from typing import List, Optional, Union
-from sqlalchemy import distinct
+from typing import List
 
 from sqlalchemy.orm import Session
 
 from database import get_db, engine
-from utils import gen_uuid
 
 import models
 import schemas

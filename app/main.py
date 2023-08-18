@@ -1,27 +1,16 @@
-from fastapi import FastAPI, Depends, status, HTTPException
+from fastapi import FastAPI, Depends, status
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import UUID4
-
-from sqlalchemy.orm import Session
 
 from database import get_db, engine
-from utils import gen_uuid, translate_text
 from routers import primary, flow, gpt, translate, journal
 
-import openai
-
 import models
-import schemas
 
 
 app = FastAPI(
-    prefix="/chatbot",
     title="Cheers Wisdom Chatbot"
 )
 origins = ['*']
-
-models.Base.metadata.create_all(bind=engine)
-
 
 app.add_middleware(
     CORSMiddleware,
@@ -30,6 +19,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+models.Base.metadata.create_all(bind=engine)
 
 app.include_router(primary.router)
 app.include_router(flow.router)
