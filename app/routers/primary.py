@@ -13,7 +13,7 @@ router = APIRouter(
 
 
 @router.get("/", response_model=schemas.GetPrimaryQuestions)
-def get_primary(db: Session = Depends(get_db)):
+def get_primary_questions(db: Session = Depends(get_db)):
     primary_questions = db.query(models.PrimaryQuestions.question_id).all()
     question_id_list = []
     for question in primary_questions:
@@ -23,7 +23,7 @@ def get_primary(db: Session = Depends(get_db)):
 
 
 @router.put("/", status_code=status.HTTP_202_ACCEPTED)
-def set_primary(payLoad: schemas.SetPrimaryQuestions, db: Session = Depends(get_db)):
+def set_primary_questions(payLoad: schemas.SetPrimaryQuestions, db: Session = Depends(get_db)):
     existing_questions = db.query(models.PrimaryQuestions).delete()
     db.commit()
 

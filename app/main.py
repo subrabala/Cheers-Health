@@ -14,7 +14,10 @@ import models
 import schemas
 
 
-app = FastAPI(prefix='/chatbot')
+app = FastAPI(
+    prefix="/chatbot",
+    title="Cheers Wisdom Chatbot"
+)
 origins = ['*']
 
 models.Base.metadata.create_all(bind=engine)

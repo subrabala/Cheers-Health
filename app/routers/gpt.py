@@ -17,7 +17,7 @@ router = APIRouter(
 pre_prompt = "You are an AI Health Chatbot. The chatbot is helpful, creative, clever, and very friendly."
 
 @router.post("/", response_model=schemas.GPTResponse)
-def gpt_response(payLoad: schemas.GPTQuery, db: Session = Depends(get_db)):
+def gen_gpt_response(payLoad: schemas.GPTQuery, db: Session = Depends(get_db)):
     if payLoad.chat_session_id is None:
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
