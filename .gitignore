@@ -1,5 +1,7 @@
 .env
 .venv
+.vscode
 **/__pycache__
 test.py
 cheers-health-ml.pem
+run.bat

@@ -1,6 +1,6 @@
-from pyexpat import model
+from datetime import datetime, timedelta
+
 from fastapi import Depends, Query, status, HTTPException, APIRouter
-from httpx import get
 from pydantic import UUID4
 from typing import List, Optional, Union
 from sqlalchemy import distinct
@@ -39,6 +39,14 @@ def get_journal_ids(user_id: UUID4, db: Session = Depends(get_db)):
     return response
 
 
+# , response_model=List[schemas.JournalDetails]
 @router.put("/update/{log_id}")
 def update_journal(log_id: UUID4, db: Session = Depends(get_db)):
-    ...
+    answered_at = db.query(models.Journal.answered_at, models.Journal.question_id).filter(
+        models.Journal.log_id == log_id).first()
+    delete_logs = db.query(models.Journal).filter(
+        models.Journal.answered_at >= answered_at.answered_at)
+    delete_logs.delete(synchronize_session=False)
+    db.commit()
+
+    return {"answered_at": answered_at.answered_at, "question_id": answered_at.question_id}

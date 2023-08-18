@@ -16,6 +16,7 @@ router = APIRouter(
 
 @router.get("/{language}/{question_id}", response_model=schemas.InitialQuestion)
 def get_questions(question_id: UUID4, language: str, db: Session = Depends(get_db)):
+    journal_id = gen_uuid()
     if language == "en":
         question = db.query(models.Questions).filter(
             models.Questions.id == question_id).first()
@@ -23,12 +24,6 @@ def get_questions(question_id: UUID4, language: str, db: Session = Depends(get_d
         answers = db.query(models.Answers).filter(
             models.Answers.question_id == question_id).all()
 
-        journal_id = gen_uuid()
-
-        response = {"journal_id": journal_id,
-                    "question": question, "answer_options": answers}
-
-        return response
     elif language == "hi":
         question = db.query(models.HindiQuestions).filter(
             models.HindiQuestions.id == question_id).first()
@@ -36,15 +31,14 @@ def get_questions(question_id: UUID4, language: str, db: Session = Depends(get_d
         answers = db.query(models.HindiAnswers).filter(
             models.HindiAnswers.question_id == question_id).all()
 
-        journal_id = gen_uuid()
-
-        response = {"journal_id": journal_id,
-                    "question": question, "answer_options": answers}
-
-        return response
     else:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Language Not Supported")
+
+    response = {"journal_id": journal_id,
+                "question": question, "answer_options": answers}
+
+    return response
 
 
 @router.post("/{language}", response_model=schemas.QuestionAnswers)
@@ -57,12 +51,18 @@ def gen_response(language: str, payLoad: schemas.GetAnswer, db: Session = Depend
         if recieved_answer.progeny_question_id is None:
             response = {"journal_id": payLoad.journal_id, "user_id": payLoad.user_id,
                         "question": None, "answer_options": None}
-
-            journal = models.Journal(
-                log_id=gen_uuid(), journal_id=payLoad.journal_id, user_id=payLoad.user_id, score=recieved_answer.score,
-                question_id=recieved_answer.question_id, progeny_question_id=None, answer_id=payLoad.answer_id,
-                question_expression=elder_question_expression, answer_expression=recieved_answer.expression, suggested_action=recieved_answer.suggested_action
-            )
+            if payLoad.answered_at is None:
+                journal = models.Journal(
+                    log_id=gen_uuid(), journal_id=payLoad.journal_id, user_id=payLoad.user_id, score=recieved_answer.score,
+                    question_id=recieved_answer.question_id, progeny_question_id=None, answer_id=payLoad.answer_id,
+                    question_expression=elder_question_expression, answer_expression=recieved_answer.expression, suggested_action=recieved_answer.suggested_action
+                )
+            else:
+                journal = models.Journal(
+                    answered_at=payLoad.answered_at, log_id=gen_uuid(), journal_id=payLoad.journal_id, user_id=payLoad.user_id, score=recieved_answer.score,
+                    question_id=recieved_answer.question_id, progeny_question_id=None, answer_id=payLoad.answer_id,
+                    question_expression=elder_question_expression, answer_expression=recieved_answer.expression, suggested_action=recieved_answer.suggested_action
+                )
 
         else:
             question = db.query(models.Questions).filter(
@@ -76,12 +76,18 @@ def gen_response(language: str, payLoad: schemas.GetAnswer, db: Session = Depend
 
             response = {"journal_id": payLoad.journal_id, "user_id": payLoad.user_id,
                         "question": question, "answer_options": answers}
-
-            journal = models.Journal(
-                log_id=gen_uuid(), journal_id=payLoad.journal_id, user_id=payLoad.user_id, score=recieved_answer.score,
-                question_id=recieved_answer.question_id, progeny_question_id=recieved_answer.progeny_question_id, answer_id=payLoad.answer_id,
-                question_expression=elder_question_expression, answer_expression=recieved_answer.expression, suggested_action=recieved_answer.suggested_action
-            )
+            if payLoad.answered_at is None:
+                journal = models.Journal(
+                    log_id=gen_uuid(), journal_id=payLoad.journal_id, user_id=payLoad.user_id, score=recieved_answer.score,
+                    question_id=recieved_answer.question_id, progeny_question_id=recieved_answer.progeny_question_id, answer_id=payLoad.answer_id,
+                    question_expression=elder_question_expression, answer_expression=recieved_answer.expression, suggested_action=recieved_answer.suggested_action
+                )
+            else:
+                journal = models.Journal(
+                    answered_at=payLoad.answered_at, log_id=gen_uuid(), journal_id=payLoad.journal_id, user_id=payLoad.user_id, score=recieved_answer.score,
+                    question_id=recieved_answer.question_id, progeny_question_id=recieved_answer.progeny_question_id, answer_id=payLoad.answer_id,
+                    question_expression=elder_question_expression, answer_expression=recieved_answer.expression, suggested_action=recieved_answer.suggested_action
+                )
 
     if language == "hi":
         recieved_answer = db.query(models.HindiAnswers).filter(
@@ -92,12 +98,18 @@ def gen_response(language: str, payLoad: schemas.GetAnswer, db: Session = Depend
         if recieved_answer.progeny_question_id is None:
             response = {"log_id": gen_uuid(), "journal_id": payLoad.journal_id, "user_id": payLoad.user_id,
                         "question": None, "answer_options": None}
-
-            journal = models.Journal(
-                log_id=gen_uuid(), journal_id=payLoad.journal_id, user_id=payLoad.user_id, score=recieved_answer.score,
-                question_id=recieved_answer.question_id, progeny_question_id=None, answer_id=payLoad.answer_id,
-                question_expression=elder_question_expression, answer_expression=recieved_answer.expression, suggested_action=recieved_answer.suggested_action
-            )
+            if payLoad.answered_at is None:
+                journal = models.Journal(
+                    log_id=gen_uuid(), journal_id=payLoad.journal_id, user_id=payLoad.user_id, score=recieved_answer.score,
+                    question_id=recieved_answer.question_id, progeny_question_id=None, answer_id=payLoad.answer_id,
+                    question_expression=elder_question_expression, answer_expression=recieved_answer.expression, suggested_action=recieved_answer.suggested_action
+                )
+            else:
+                journal = models.Journal(
+                    answered_at=payLoad.answered_at, log_id=gen_uuid(), journal_id=payLoad.journal_id, user_id=payLoad.user_id, score=recieved_answer.score,
+                    question_id=recieved_answer.question_id, progeny_question_id=None, answer_id=payLoad.answer_id,
+                    question_expression=elder_question_expression, answer_expression=recieved_answer.expression, suggested_action=recieved_answer.suggested_action
+                )
 
         else:
             question = db.query(models.HindiQuestions).filter(
@@ -111,12 +123,18 @@ def gen_response(language: str, payLoad: schemas.GetAnswer, db: Session = Depend
 
             response = {"journal_id": payLoad.journal_id, "user_id": payLoad.user_id,
                         "question": question, "answer_options": answers}
-
-            journal = models.Journal(
-                log_id=gen_uuid(), journal_id=payLoad.journal_id, user_id=payLoad.user_id, score=recieved_answer.score,
-                question_id=recieved_answer.question_id, progeny_question_id=recieved_answer.progeny_question_id, answer_id=payLoad.answer_id,
-                question_expression=elder_question_expression, answer_expression=recieved_answer.expression, suggested_action=recieved_answer.suggested_action
-            )
+            if payLoad.answered_at is None:
+                journal = models.Journal(
+                    log_id=gen_uuid(), journal_id=payLoad.journal_id, user_id=payLoad.user_id, score=recieved_answer.score,
+                    question_id=recieved_answer.question_id, progeny_question_id=recieved_answer.progeny_question_id, answer_id=payLoad.answer_id,
+                    question_expression=elder_question_expression, answer_expression=recieved_answer.expression, suggested_action=recieved_answer.suggested_action
+                )
+            else:
+                journal = models.Journal(
+                    answered_at=payLoad.answered_at, log_id=gen_uuid(), journal_id=payLoad.journal_id, user_id=payLoad.user_id, score=recieved_answer.score,
+                    question_id=recieved_answer.question_id, progeny_question_id=recieved_answer.progeny_question_id, answer_id=payLoad.answer_id,
+                    question_expression=elder_question_expression, answer_expression=recieved_answer.expression, suggested_action=recieved_answer.suggested_action
+                )
 
     db.add(journal)
     db.commit()

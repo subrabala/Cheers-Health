@@ -18,9 +18,11 @@ class SetPrimaryQuestions(BaseModel):
 
 
 class GetAnswer(BaseModel):
+    answered_at: datetime
     answer_id: UUID4
     journal_id: UUID4
     user_id: UUID4
+    answered_at: Optional[datetime]=None
 
 # Request Schema for getting Query for generating GPT Response
 
@@ -108,6 +110,8 @@ class UserJournals(BaseModel):
     answered_at: datetime
     journal_id: UUID4
 
+
+# Response Schema for getting Journal Details
 
 
 class JournalDetails(BaseModel):
