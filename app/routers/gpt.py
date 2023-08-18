@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 
 from database import get_db, engine
 from utils import gen_uuid
+from config import settings
 
 import openai
 
@@ -13,7 +14,7 @@ import schemas
 router = APIRouter(
     prefix="/gpt_response"
 )
-
+openai.api_key = settings.openai_api_key
 pre_prompt = "You are an AI Health Chatbot. The chatbot is helpful, creative, clever, and very friendly."
 
 @router.post("/", response_model=schemas.GPTResponse)
