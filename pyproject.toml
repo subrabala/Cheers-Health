@@ -17,13 +17,13 @@ openpyxl = "^3.1.2"
 sqlalchemy = "^2.0.19"
 psycopg2 = "^2.9.7"
 uuid = "^1.30"
-pandas = "^2.0.3"
 alembic = "^1.11.2"
 google-cloud-translate = "^3.12.0"
+pandas = "^2.0.3"
 
 
 [tool.poetry.group.dev.dependencies]
-ipykernel = "^6.25.0"
+ipykernel = "^6.25.1"
 
 [build-system]
 requires = ["poetry-core"]
