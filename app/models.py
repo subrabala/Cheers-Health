@@ -13,7 +13,7 @@ class Questions(Base):
     updated_at = Column(TIMESTAMP(timezone=True),
                         nullable=False, server_default=text('now()'))
     id = Column(Uuid(as_uuid=True), primary_key=True,
-                nullable=False, default=uuid.uuid4())
+                nullable=False, default=uuid.uuid4)
     expression = Column(Text, nullable=False)
     keyword_intents = Column(VARCHAR[255], nullable=True)
 
@@ -24,7 +24,7 @@ class HindiQuestions(Base):
     created_at = Column(TIMESTAMP(timezone=True), nullable=False)
     updated_at = Column(TIMESTAMP(timezone=True), nullable=False)
     id = Column(Uuid(as_uuid=True), primary_key=True,
-                nullable=False, default=uuid.uuid4())
+                nullable=False, default=uuid.uuid4)
     expression = Column(Text, nullable=False)
     keyword_intents = Column(VARCHAR[255], nullable=True)
 
@@ -37,7 +37,7 @@ class Answers(Base):
     updated_at = Column(TIMESTAMP(timezone=True),
                         nullable=False, server_default=text('now()'))
     id = Column(Uuid(as_uuid=True), primary_key=True,
-                nullable=False, default=uuid.uuid4())
+                nullable=False, default=uuid.uuid4)
     expression = Column(Text, nullable=False)
     score = Column(Integer, nullable=False)
     keyword_intents = Column(ARRAY(String), nullable=True)
@@ -53,7 +53,7 @@ class HindiAnswers(Base):
     created_at = Column(TIMESTAMP(timezone=True), nullable=False)
     updated_at = Column(TIMESTAMP(timezone=True), nullable=False)
     id = Column(Uuid(as_uuid=True), primary_key=True,
-                nullable=False, default=uuid.uuid4())
+                nullable=False, default=uuid.uuid4)
     expression = Column(Text, nullable=False)
     score = Column(Integer, nullable=False)
     keyword_intents = Column(ARRAY(String), nullable=True)
@@ -86,7 +86,7 @@ class GPTLogs(Base):
     user_id = Column(Uuid(as_uuid=True), nullable=False)
     chat_session_id = Column(Uuid(as_uuid=True), nullable=False)
     message_id = Column(Uuid(as_uuid=True), primary_key=True,
-                        nullable=False, default=uuid.uuid4())
+                        nullable=False, default=uuid.uuid4)
     query = Column(Text, nullable=False)
     response = Column(Text, nullable=False)
 
@@ -96,4 +96,4 @@ class PrimaryQuestions(Base):
     added_at = Column(TIMESTAMP(timezone=True),
                       nullable=False, server_default=text('now()'))
     question_id = Column(Uuid(as_uuid=True), primary_key=True,
-                         nullable=False, default=uuid.uuid4())
+                         nullable=False, default=uuid.uuid4)
