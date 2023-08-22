@@ -8,7 +8,7 @@ from utils import translate_text
 import models
 
 router = APIRouter(
-    prefix="/translate"
+    prefix="/api/translate"
 )
 
 

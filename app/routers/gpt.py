@@ -12,7 +12,7 @@ import models
 import schemas
 
 router = APIRouter(
-    prefix="/gpt_response"
+    prefix="/api/gpt_response"
 )
 openai.api_key = settings.openai_api_key
 pre_prompt = "You are an AI Health Chatbot. The chatbot is helpful, creative, clever, and very friendly."

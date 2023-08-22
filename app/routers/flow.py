@@ -10,7 +10,7 @@ import models
 import schemas
 
 router = APIRouter(
-    prefix="/get_question"
+    prefix="/api/get_question"
 )
 
 

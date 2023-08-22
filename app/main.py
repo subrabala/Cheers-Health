@@ -27,8 +27,3 @@ app.include_router(flow.router)
 app.include_router(gpt.router)
 app.include_router(translate.router)
 app.include_router(journal.router)
-
-
-@app.get("/", status_code=status.HTTP_200_OK)
-def hello():
-    return {"API Status": "active"}

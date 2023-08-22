@@ -8,7 +8,7 @@ import models
 import schemas
 
 router = APIRouter(
-    prefix="/primary_questions"
+    prefix="/api/primary_questions"
 )
 
 

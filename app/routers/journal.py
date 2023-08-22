@@ -10,7 +10,7 @@ import models
 import schemas
 
 router = APIRouter(
-    prefix="/journal"
+    prefix="/api/journal"
 )
 
 
