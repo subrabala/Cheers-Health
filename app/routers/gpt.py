@@ -22,10 +22,16 @@ def gen_gpt_response(payLoad: schemas.GPTQuery, db: Session = Depends(get_db)):
     if payLoad.chat_session_id is None:
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
-            prompt=[{"role": "system", "content": pre_prompt}, {"role": "user", "content": payLoad.query}],
+            messages=[{"role": "system", "content": pre_prompt}, {"role": "user", "content": payLoad.query}],
             stop="bye",
         )
-        return {"chat_session_id": gen_uuid(), "response": response.choices[0].message.content.strip()}
+        chat_session_id = gen_uuid()
+        new_chat = models.GPTLogs(user_id=payLoad.user_id, chat_session_id=chat_session_id,
+                                query=payLoad.query, response=response.choices[0].message.content.strip())
+
+        db.add(new_chat)
+        db.commit()
+        return {"chat_session_id": chat_session_id, "response": response.choices[0].message.content.strip()}
 
 
     history = db.query(models.GPTLogs).filter(models.GPTLogs.chat_session_id==payLoad.chat_session_id).all()
@@ -42,7 +48,7 @@ def gen_gpt_response(payLoad: schemas.GPTQuery, db: Session = Depends(get_db)):
 
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
-        prompt= chat_history,
+        messages = chat_history,
         # temperature=0.9,
         # max_tokens=150,
         # frequency_penalty=0,
@@ -54,11 +60,11 @@ def gen_gpt_response(payLoad: schemas.GPTQuery, db: Session = Depends(get_db)):
 
     chat_history = []
 
-    new_chat = models.GPTLogs(user_id=payLoad.user_id, chat_session_id=payLoad.chat_session_id,
+    new_chat = models.GPTLogs(user_id=payLoad.usopeer_id, chat_session_id=payLoad.chat_session_id,
                               query=payLoad.query, response=response.choices[0].message.content.strip())
 
 
     db.add(new_chat)
     db.commit()
 
-    return {"response": response.choices[0].message.content.strip()}
+    return {"chat_session_id": payLoad.chat_session_id, "response": response.choices[0].message.content.strip()}
