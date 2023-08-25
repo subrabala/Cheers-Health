@@ -44,8 +44,6 @@ def gen_gpt_response(payLoad: schemas.GPTQuery, db: Session = Depends(get_db)):
 
     chat_history.append({"role": "user", "content": payLoad.query})
 
-    print(chat_history)
-
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages = chat_history,

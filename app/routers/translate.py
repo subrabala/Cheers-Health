@@ -27,25 +27,20 @@ def translate_database(db: Session = Depends(get_db)):
         question_dict["expression"] = translate_text(
             question_dict["expression"], "q")
         del question_dict["_sa_instance_state"]
-        print(question_dict["expression"])
         new_question = models.HindiQuestions(**question_dict)
         db.add(new_question)
-        # db.commit()
 
     answers = db.query(models.Answers).all()
     for answer in answers:
         answer_dict = answer.__dict__
         answer_dict["expression"] = translate_text(
             answer_dict["expression"], "a")
-        print(answer_dict["expression"])
         if answer_dict["suggested_action"] is not None:
             answer_dict["suggested_action"] = translate_text(
                 answer_dict["suggested_action"], "s")
-            print(answer_dict["suggested_action"])
         del answer_dict["_sa_instance_state"]
         new_answer = models.HindiAnswers(**answer_dict)
         db.add(new_answer)
-        # db.commit()
     db.commit()
 
     return {"Details": "Database Translated"}
