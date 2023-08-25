@@ -13,24 +13,24 @@ def gen_uuid():
 
 def translate_text(text, type):
     text = str(text)
-    if type == "q":
-        paraphrased_text = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": f"Paraphrase the following text to make it sound like you are asking a question: {text}"}]
-        )
-    elif type == "a":
-        paraphrased_text = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": f"Paraphrase the following text to make it sound like you are giving an answer to an asked question:: {text}"}]
-        )
-    elif type == "s":
-        paraphrased_text = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": f"Paraphrase the following text to make it sound like you are suggesting an action: {text}"}]
-        )
+    # if type == "q":
+    #     paraphrased_text = openai.ChatCompletion.create(
+    #         model="gpt-3.5-turbo",
+    #         messages=[
+    #             {"role": "system", "content": f"Paraphrase the following text to make it sound like you are asking a question: {text}"}]
+    #     )
+    # elif type == "a":
+    #     paraphrased_text = openai.ChatCompletion.create(
+    #         model="gpt-3.5-turbo",
+    #         messages=[
+    #             {"role": "system", "content": f"Paraphrase the following text to make it sound like you are giving an answer to an asked question:: {text}"}]
+    #     )
+    # elif type == "s":
+    #     paraphrased_text = openai.ChatCompletion.create(
+    #         model="gpt-3.5-turbo",
+    #         messages=[
+    #             {"role": "system", "content": f"Paraphrase the following text to make it sound like you are suggesting an action: {text}"}]
+    #     )
     # else:
     #     paraphrased_text = text
     project_id="cheers-wisdom-translate"
@@ -40,7 +40,7 @@ def translate_text(text, type):
     response=client.translate_text(
         request={
             "parent": parent,
-            "contents": [str(paraphrased_text.choices[0].message.content.strip())],
+            "contents": [text],
             "mime_type": "text/plain",
             "source_language_code": "en-US",
             "target_language_code": "hi",
